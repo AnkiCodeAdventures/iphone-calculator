@@ -1,72 +1,56 @@
 "use strict";
 
+const calculator = document.querySelector(".calculator");
+let key;
 let number = "";
-let previousOperator = "";
+let workingNumber = 0;
 let operator = "";
-let runningTotal = "";
 
-const calculator = document.querySelector("#calculator");
-const result = document.querySelector("#result");
-
-calculator.addEventListener("click", onClick);
-
-function calculation(num, symbol) {
-  runningTotal= 
-}
-
-function onClick(event) {
-  onButtonClick(event.target.innerText);
-}
-
-function onButtonClick(value) {
-  if (isNaN(value)) {
+calculator.addEventListener("click", (event) => {
+  key = event.target.textContent;
+  if (isNaN(key)) {
     //It is a symbol
-    handleSymbol(value);
+    operator = key;
+
+    handlesMath();
   } else {
-    // It is a value
-    handleNumber(value);
-  }
-}
+    //It is a number
 
-function rerender(value) {
-  result.innerText = value;
-}
-
-function handleNumber(clickedNumber) {
-  if (clickedNumber === "0" && number === "") {
-    return;
+    handlesNumber();
   }
-  number = number + clickedNumber;
+});
+
+function handlesNumber() {
+  number = number + key;
   rerender(number);
 }
 
-function handleMath(value) {
-  if (operator == "") previousOperator = value;
-  console.log(previousOperator);
+function rerender(num) {
+  document.querySelector("#screen").innerText = num;
 }
 
-function handleSymbol(value) {
-  switch (value) {
-    case "←":
-      if (number.length <= 1) {
-        rerender("0");
-        number = "";
-      } else {
-        number = number.substring(0, number.length - 1);
-        rerender(number);
-      }
-      break;
+function handlesMath() {
+  switch (key) {
     case "C":
-      number = "";
-      rerender("0");
+      document.querySelector("#screen").innerText = 0;
       break;
-    case "÷":
-    case "×":
+    case "←":
+      number = number.substring(0, number.length - 1); //removes last digit
+      rerender(number);
+      break;
     case "+":
-    case "−":
-      calculator(number, "+");
-      operator = value;
-      handleMath(value);
+      workingNumber = workingNumber + parseInt(number);
+      number = "";
+      console.log(workingNumber);
+      rerender(workingNumber);
+
+      break;
+    case "-":
+      workingNumber = workingNumber - parseInt(number);
+      number = "";
+      console.log(workingNumber);
+      rerender(workingNumber);
+
       break;
   }
 }
