@@ -1,56 +1,83 @@
-"use strict";
+const result = document.querySelector("#screen");
+let bufferNumber = "0";
+let previousOperator = "+";
+let runningTotal = "0";
 
-const calculator = document.querySelector(".calculator");
-let key;
-let number = "";
-let workingNumber = 0;
-let operator = "";
+document.querySelector(".calculator").addEventListener("click", onClick);
 
-calculator.addEventListener("click", (event) => {
-  key = event.target.textContent;
-  if (isNaN(key)) {
-    //It is a symbol
-    operator = key;
-
-    handlesMath();
+function onClick(event) {
+  value = event.target.innerText;
+  if (isNaN(value)) {
+    handleSymbol(value);
   } else {
-    //It is a number
-
-    handlesNumber();
+    handleNumber(value);
   }
-});
-
-function handlesNumber() {
-  number = number + key;
-  rerender(number);
+  rerender();
 }
 
-function rerender(num) {
-  document.querySelector("#screen").innerText = num;
+function rerender() {
+  result.innerText = bufferNumber;
+}
+function handleNumber(value) {
+  if (bufferNumber === "0") {
+    bufferNumber = value;
+  } else {
+    bufferNumber = bufferNumber + value;
+  }
 }
 
-function handlesMath() {
-  switch (key) {
+function handleSymbol(value) {
+  switch (value) {
     case "C":
-      document.querySelector("#screen").innerText = 0;
+      bufferNumber = "0";
+      runningTotal = "0";
       break;
     case "←":
-      number = number.substring(0, number.length - 1); //removes last digit
-      rerender(number);
+      if (bufferNumber.length === 1) {
+        bufferNumber = "0";
+      } else {
+        bufferNumber = bufferNumber.substring(0, bufferNumber.length - 1);
+      }
       break;
+    case "÷":
+    case "x":
     case "+":
-      workingNumber = workingNumber + parseInt(number);
-      number = "";
-      console.log(workingNumber);
-      rerender(workingNumber);
-
-      break;
     case "-":
-      workingNumber = workingNumber - parseInt(number);
-      number = "";
-      console.log(workingNumber);
-      rerender(workingNumber);
-
+      handleMath(value);
       break;
+    case "=":
+      flushOperation();
+      bufferNumber = runningTotal;
+      runningTotal = "0";
   }
+}
+
+function handleMath(value) {
+  previousOperator = value;
+  if (runningTotal === "0") {
+    runningTotal = parseInt(bufferNumber);
+    bufferNumber = "0";
+  } else {
+    flushOperation();
+  }
+}
+
+function flushOperation() {
+  if (previousOperator === "+") {
+    runningTotal = parseInt(bufferNumber) + parseInt(runningTotal);
+    console.log(runningTotal);
+  }
+  if (previousOperator === "-") {
+    runningTotal = parseInt(runningTotal) - parseInt(bufferNumber);
+    console.log(runningTotal);
+  }
+  if (previousOperator === "x") {
+    runningTotal = parseInt(bufferNumber) * parseInt(runningTotal);
+    console.log(runningTotal);
+  }
+  if (previousOperator === "÷") {
+    runningTotal = parseInt(runningTotal) / parseInt(bufferNumber);
+    console.log(runningTotal);
+  }
+  bufferNumber = "0";
 }
