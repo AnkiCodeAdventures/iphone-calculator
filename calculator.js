@@ -47,7 +47,7 @@ function handleSymbol(value) {
       break;
     case "=":
       flushOperation();
-      bufferNumber = runningTotal;
+      bufferNumber = runningTotal.toString();
       runningTotal = "0";
   }
 }
@@ -79,5 +79,4 @@ function flushOperation() {
     runningTotal = parseInt(runningTotal) / parseInt(bufferNumber);
     console.log(runningTotal);
   }
-  bufferNumber = "0";
 }
